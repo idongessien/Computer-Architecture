@@ -17,19 +17,33 @@ class CPU:
 
         self.MDR = None
 
-    def ram_read(self, address):
+    def ram_read(self, MAR):
 
-        self.MAR = address
+        self.MAR = MAR
 
-        self.MDR = self.ram[self.MAR]
+        self.MDR = self.ram[MAR]
 
         return self.MDR
 
-    def ram_write(self, value, address):
+    def ram_write(self, MDR, MAR):
 
-        self.MDR = value
+        self.MDR = MDR
 
-        self.MAR = address
+        self.MAR = MAR
+
+        self.ram[MAR] = MDR
+
+    def HLT(self):
+
+        self.running = False
+
+    def LDI(self, operand_a, operand_b):
+
+        self.reg[operand_a] = operand_b
+
+    def PRN(self, operand_a):
+
+        print(operand_a)
 
     def load(self):
         """Load a program into memory."""
