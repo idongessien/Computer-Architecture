@@ -7,7 +7,43 @@ class CPU:
 
     def __init__(self):
         """Construct a new CPU."""
-        pass
+        self.ram = [0] * 256
+
+        self.reg = [0] * 8
+
+        self.PC = 0
+
+        self.MAR = None
+
+        self.MDR = None
+
+    def ram_read(self, MAR):
+
+        self.MAR = MAR
+
+        self.MDR = self.ram[MAR]
+
+        return self.MDR
+
+    def ram_write(self, MDR, MAR):
+
+        self.MDR = MDR
+
+        self.MAR = MAR
+
+        self.ram[MAR] = MDR
+
+    def HLT(self):
+
+        self.running = False
+
+    def LDI(self, operand_a, operand_b):
+
+        self.reg[operand_a] = operand_b
+
+    def PRN(self, operand_a):
+
+        print(operand_a)
 
     def load(self):
         """Load a program into memory."""
@@ -47,12 +83,12 @@ class CPU:
         """
 
         print(f"TRACE: %02X | %02X %02X %02X |" % (
-            self.pc,
+            self.PC,
             #self.fl,
             #self.ie,
-            self.ram_read(self.pc),
-            self.ram_read(self.pc + 1),
-            self.ram_read(self.pc + 2)
+            self.ram_read(self.PC),
+            self.ram_read(self.PC + 1),
+            self.ram_read(self.PC + 2)
         ), end='')
 
         for i in range(8):
@@ -62,4 +98,34 @@ class CPU:
 
     def run(self):
         """Run the CPU."""
-        pass
+        PRN = 0b01000111
+
+        HLT = 0b00000001
+
+        LDI = 0b10000010
+
+        running = True
+
+        while running:
+
+            IR = self.ram_read(self.PC)
+
+            operand_a = self.ram_read(self.PC + 1)
+
+            operand_b = self.ram_read(self.PC + 2)
+
+            if (IR == LDI):
+
+                self.ldi(operand_a, operand_b)
+
+                self.PC += 2
+
+            elif (IR == PRN):
+
+                self.prn(self.reg[operand_a])
+
+                self.PC += 2 
+
+            elif (IR == HLT):
+
+                running = False
